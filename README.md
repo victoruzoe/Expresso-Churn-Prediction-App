@@ -10,9 +10,20 @@ A **Streamlit web application** is included, allowing users to enter customer de
 
 ---
 
+## Live Demo
+
+**Try the deployed Streamlit application:**
+
+[Launch Expresso Churn Prediction App](https://ex-churn-prediction-app.streamlit.app/)
+
+The application allows users to enter customer usage and behavioural information and receive a churn prediction with an estimated probability score.
+
+---
+
 ## Table of Contents
 
 * [Project Overview](#project-overview)
+* [Live Demo](#live-demo)
 * [Dataset Description](#dataset-description)
 * [Project Objective](#project-objective)
 * [Project Workflow](#project-workflow)
@@ -67,17 +78,17 @@ Specific objectives:
 ## Project Workflow
 
 1. Load and explore the dataset
-2. Identify and handle missing values using median and mode imputation
-3. Drop columns with limited predictive value: `user_id`, `MRG`, `ZONE1`, `ZONE2`, and `TOP_PACK`
-4. Encode `REGION` using Label Encoding
-5. Encode `TENURE` using Ordinal Encoding
-6. Handle outliers using the IQR method
-7. Split the dataset into training and test sets
-8. Scale the feature columns using `MinMaxScaler`
-9. Train a Logistic Regression model with `class_weight='balanced'`
-10. Evaluate the model using accuracy, ROC-AUC, confusion matrix, and classification report
-11. Save the model, scaler, and region encoder as pickle files
-12. Load the saved files in the Streamlit app for real-time predictions
+2. Drop columns with limited predictive value: `user_id`, `MRG`, `ZONE1`, `ZONE2`, and `TOP_PACK`
+3. Define the feature set and target
+4. Split the dataset into training and test sets
+5. Handle missing values using training-set median and mode values
+6. Encode `REGION` using Label Encoding
+7. Encode `TENURE` using Ordinal Encoding
+8. Handle outliers using IQR thresholds derived from the training data
+9. Scale the feature columns using `MinMaxScaler` fitted on the training data
+10. Train a Logistic Regression model with `class_weight='balanced'`
+11. Evaluate the model using accuracy, ROC-AUC, confusion matrix, and classification report
+12. Save the model, scaler, and region encoder as pickle files for the Streamlit app
 
 ---
 
@@ -95,9 +106,9 @@ Specific objectives:
 
 ### Missing Value Strategy
 
-Numeric columns were filled using the **median** because median is more robust to skewed values and outliers.
+Numeric columns were filled using the **median** calculated from the training data because median is more robust to skewed values and outliers.
 
-Categorical columns were filled using the **mode**, which represents the most frequent category.
+Categorical columns were filled using the **mode** calculated from the training data. The same training-derived values were then applied to the test data.
 
 ### Encoding
 
@@ -173,6 +184,8 @@ This visualisation shows the distribution of selected numerical features and hel
 
 ## Streamlit App
 
+**Live app:** [https://ex-churn-prediction-app.streamlit.app/](https://ex-churn-prediction-app.streamlit.app/)
+
 The Streamlit app loads the trained model, scaler, and region encoder. It allows users to:
 
 * Select a customer region
@@ -204,13 +217,18 @@ expresso-churn-prediction/
 │   ├── confusion_matrix.png
 │   └── streamlit_app_demo.png
 │
+├── models/
+│   ├── model.pkl
+│   ├── scaler.pkl
+│   └── region_encoder.pkl
+│
 ├── app.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
 ```
 
-> **Note:** `model.pkl`, `scaler.pkl`, and `region_encoder.pkl` are generated locally when the notebook is run. They are excluded from the repository using `.gitignore`.
+> **Note:** The notebook generates the three deployment files inside `models/`. These files must be available to `app.py` for the Streamlit application to run.
 
 ---
 
@@ -219,8 +237,8 @@ expresso-churn-prediction/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/expresso-churn-prediction.git
-cd expresso-churn-prediction
+git clone https://github.com/victoruzoe/Expresso-Churn-Prediction-App.git
+cd Expresso-Churn-Prediction-App
 ```
 
 ### 2. Install dependencies
@@ -252,9 +270,9 @@ notebooks/expresso_churn_prediction.ipynb
 This will train the model and generate:
 
 ```text
-model.pkl
-scaler.pkl
-region_encoder.pkl
+models/model.pkl
+models/scaler.pkl
+models/region_encoder.pkl
 ```
 
 ### 5. Launch the Streamlit app
@@ -310,7 +328,6 @@ Future improvements for this project include:
 * Perform hyperparameter tuning with GridSearchCV
 * Add feature importance visualisation
 * Save preprocessing and model steps together using a Scikit-learn pipeline
-* Deploy the Streamlit app to Streamlit Cloud for public access
 
 ---
 
@@ -328,4 +345,4 @@ The project covers the full data science workflow, including data cleaning, feat
 
 **Victor Uzoewulu**
 
-This project was originally completed as part of my **GoMyCode Data Science Programme checkpoints back in 2023** and later refined as part of my data science portfolio.
+This project was originally completed as part of my **GoMyCode Data Science Programme checkpoints back in 2023**.
